@@ -209,24 +209,29 @@ def main():
             video_calib_path = None
         video_output_dirpath = Path(args.output_dirpath) / video_name
         video_output_dirpath.mkdir(parents=True, exist_ok=True)
+        video_output_path = video_output_dirpath / f'{video_name}.mp4'
+        if video_output_path.exists():
+            continue
         run(args,
-            cfg, 
-            video_path.as_posix(), 
-            video_output_dirpath.as_posix(), 
-            network, 
-            video_calib_path.as_posix() if video_calib_path is not None else None, 
-            run_global=not args.estimate_local_only, 
+            cfg,
+            video_path.as_posix(),
+            video_output_dirpath.as_posix(),
+            network,
+            video_calib_path.as_posix() if video_calib_path is not None else None,
+            run_global=not args.estimate_local_only,
             save_pkl=args.save_pkl,
             visualize=args.visualize)
-        output_video_old_path = video_output_dirpath / 'output.mp4'
-        output_video_new_path = video_output_dirpath / f'{video_name}.mp4'
-        shutil.move(output_video_old_path, output_video_new_path)
-            
-    
-    # Output folder
-    sequence = '.'.join(args.video.split('/')[-1].split('.')[:-1])
-    output_pth = osp.join(args.output_pth, sequence)
-    os.makedirs(output_pth, exist_ok=True)
+
+        # Rename video file
+        video_output_old_path = video_output_dirpath / 'output.mp4'
+        shutil.move(video_output_old_path, video_output_path)
+
+        # Extract frames
+        video_frames_dirpath = video_output_dirpath / 'frames'
+        video_frames_dirpath.mkdir(parents=True, exist_ok=True)
+        cmd = f'ffmpeg -i {video_output_path.as_posix()} {video_frames_dirpath.as_posix()}/%04d.png'
+        print(cmd)
+        os.system(cmd)
     
     print()
     logger.info('Done !')
@@ -237,7 +242,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--videos_dirpath', type=str, 
-                        default='../../../../../databases/spree_internal/data/rgb_mp4', 
+                        default='../../../../../databases/spree_internal/data/rgb_mp4',
                         help='directory containing mp4 videos')
 
     parser.add_argument('--output_dirpath', type=str, 

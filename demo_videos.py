@@ -229,7 +229,7 @@ def main():
         # Extract frames
         video_frames_dirpath = video_output_dirpath / 'frames'
         video_frames_dirpath.mkdir(parents=True, exist_ok=True)
-        cmd = f'ffmpeg -i {video_output_path.as_posix()} {video_frames_dirpath.as_posix()}/%04d.png'
+        cmd = f'ffmpeg -i {video_output_path.as_posix()} -start_number 0 {video_frames_dirpath.as_posix()}/%04d.png'
         print(cmd)
         os.system(cmd)
     

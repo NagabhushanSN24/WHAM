@@ -242,7 +242,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--videos_dirpath', type=str, 
-                        default='../../../../../databases/spree_internal/data/rgb_mp4',
+                        default='../../../../../databases/Spree01/data/rgb_mp4',
                         help='directory containing mp4 videos')
 
     parser.add_argument('--output_dirpath', type=str, 
